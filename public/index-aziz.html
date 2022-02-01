@@ -21,12 +21,6 @@
 		<option value="44100">44100</option>
 		<option value="11025">11025</option>
 	</select>
-	<br><br>
-	<input class="form" type="hidden" id="socket.io_address" value="/" />
-	<label class="form" for="option_url">RTMP Destination:</label>
-	<input class="form" type="text" id="option_url" style="width:33%"
-		value="rtmp://broadcast.api.video/s/30087931-229e-42cf-b5f9-e91bcc1f7332" />
-	<br>
 	<input class="form" type="checkbox" style="display:none" id="checkbox_Reconection" checked="true">
 	<label class="form" style="display:none">Reconnection </label>
 	<br>
@@ -63,8 +57,7 @@
 		var output_console = document.getElementById('output_console'),
 			output_message = document.getElementById('output_message'),
 			output_video = document.getElementById('output_video'),
-			option_url = document.getElementById('option_url'),
-			socketio_address = document.getElementById('socket.io_address'),
+			socketio_address = '/',
 			option_width = document.getElementById('option_width'),
 			option_height = document.getElementById('option_height'),
 			option_framerate = document.getElementById('option_framerate'),
@@ -74,15 +67,13 @@
 			width = parseInt(option_width.value),
 			framerate = parseInt(option_framerate.value),
 			audiobitrate = parseInt(option_bitrate.value),
-			url=option_url.value='rtmp://'+location.host.split(':')[0]+':1935/a';
-			url = option_url.value;
+			url = 'rtmp://'+location.host.split(':')[0]+':1935/a';
 
 		console.log("framerate", framerate);
 		option_height.onchange = option_height.onkeyup = function () { height = 1 * this.value; }
 		option_width.onchange = option_width.onkeyup = function () { width = 1 * this.value; console.log("width" + width); }
 		option_framerate.onchange = option_framerate.onkeyup = function () { framerate = 1 * this.value; console.log("framerate" + framerate); }
 		option_bitrate.onchange = option_bitrate.onkeyup = function () { audiobitrate = 1 * this.value; console.log("bitrate" + audiobitrate); }
-		option_url.onchange = option_url.onkeyup = function () { url = this.value; }
 		button_start.onclick = requestMedia;
 		button_stop.onclick = stopStream;
 		button_server.onclick = connect_server;
