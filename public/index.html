@@ -5,7 +5,7 @@
 	<script src="socket.io.js"></script>
 	<link rel="stylesheet" href="style.css">
 	<link rel="icon" href="icon.ico">
-	<script>
+	<!-- <script>
 		var __nspid = "isrtzw";
 		var __nsptags = [];
 		(function (w, d) {
@@ -18,35 +18,18 @@
 			else if (w.attachEvent) { w.attachEvent("onload", x); }
 			else { w.onload = x; }
 		}(window, document));
-	</script>
+	</script> -->
 	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-N9E9YP1HGF"></script>
-	<script>
+	<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-N9E9YP1HGF"></script> -->
+	<!-- <script>
 		window.dataLayer = window.dataLayer || [];
 		function gtag() { dataLayer.push(arguments); }
 		gtag('js', new Date());
 		gtag('config', 'G-N9E9YP1HGF');
-	</script>
+	</script> -->
 </head>
 
 <body>
-	<header class="header">
-		<h1>
-			Start a Live Stream!
-		</h1>
-	</header>
-	<h2>
-		To start a live stream:
-		<ul>
-			<li>Choose the size of the video you are uploading. Big is awesome, but too big, and the server cannot
-				transcode the video fast enough.</li>
-			<li> Enter the RTMP Destination for your api.video stream. You'll find this at by clicking on your <a
-					href="https://go.api.video/livestreams/">livestream</a>.<br /></li>
-			<li> When you are ready press "Start Streaming."</li>
-		</ul>
-		If you'd like to share your screen & camera, try <a href="https://record.a.video?live=true">record.a.video</a>
-	</h2>
-	<hr />
 	<br><label for="option_width" class="form">Size:</label>
 	<input class="form" type="text" id="option_width" value="240" /> &times;
 	<input class="form" type="text" id="option_height" value="240" />
@@ -90,26 +73,13 @@
 		<svg id="recording" height="50" width="50">
 			<circle id="recordingCircle" cx="25" cy="25" r="20" stroke="black" stroke-width="1" fill="gray" />
 		</svg>
-		<video id="videoElement" preload="none"></video>
+		<!-- <video id="videoElement" preload="none"></video> -->
 	</div>
 
 
 	<textarea readonly="true" id="output_console" rows=15>
 </textarea>
-	<div id="footer">
-		This app was created with <a href="https://api.video">api.video</a>.<br />
-		Get the <a href="https://github.com/dougsillars/browserLiveStream">sample code</a>, and read about <a
-			href="https://a.video/works/livestream-a-video">how we built the demo.</a><br />
-		More sample apps can be found at <a href="https://a.video">a.video</a>.
-
-	</div>
 	<script>
-
-		//	var constraints = navigator.mediaDevices.getSupportedConstraints();
-		//	console.log("constraints", constraints);
-		//	console.log("constraints", constraints.frameRate.value);
-
-
 		function fail(str) { alert(str + "\nUnable to access the camera Please ensure you are on HTTPS and using Firefox or Chrome."); location.replace('http://mozilla.org/firefox'); }
 
 		var output_console = document.getElementById('output_console'),
@@ -126,7 +96,7 @@
 			width = parseInt(option_width.value),
 			framerate = parseInt(option_framerate.value),
 			audiobitrate = parseInt(option_bitrate.value),
-			//url=option_url.value='rtmp://'+location.host.split(':')[0]+':1935/live/test0';
+			url=option_url.value='rtmp://'+location.host.split(':')[0]+':1935/a';
 			url = option_url.value;
 
 		console.log("framerate", framerate);
@@ -205,7 +175,6 @@
 			if (!navigator.getUserMedia) { fail('No getUserMedia() available.'); }
 			if (!MediaRecorder) { fail('No MediaRecorder available.'); }
 
-
 			var socketOptions = { secure: true, reconnection: true, reconnectionDelay: 1000, timeout: 15000, pingTimeout: 15000, pingInterval: 45000, query: { framespersecond: framerate, audioBitrate: audiobitrate } };
 
 			//start socket connection
@@ -248,11 +217,11 @@
 				console.log('media recorder restarted');
 				recordingCircle.style.fill = 'gray';
 
-				//mediaRecorder.start();
-				//state="stop";
-				//button_start.disabled=true;
-				//button_server.disabled=false;
-				//document.getElementById('button_start').disabled=true;　
+				// mediaRecorder.start();
+				// state="stop";
+				// button_start.disabled=true;
+				// button_server.disabled=false;
+				// document.getElementById('button_start').disabled=true;　
 				//restart the server
 
 				if (oo.checked) {
@@ -301,7 +270,6 @@
 
 
 		function requestMedia() {
-
 			var constraints = {
 				audio: {
 					sampleRate: audiobitrate,
@@ -336,20 +304,17 @@
 					console.log("stopped!");
 					console.log(e);
 					//stream.stop();
-
 				}
 
 				mediaRecorder.onpause = function (e) {
 					console.log("media recorder paused!!");
 					console.log(e);
 					//stream.stop();
-
 				}
 
 				mediaRecorder.onerror = function (event) {
 					let error = event.error;
 					console.log("error", error.name);
-
 				};
 				//document.getElementById('button_start').disabled=false;　
 
