@@ -8,28 +8,28 @@
 </head>
 
 <body>
-	<br><label for="option_width" class="form">Size:</label>
-	<input class="form" type="text" id="option_width" value="240" /> &times;
-	<input class="form" type="text" id="option_height" value="240" />
+	<br><label for="optionWidth" class="form">Size:</label>
+	<input class="form" type="text" id="optionWidth" value="240" /> &times;
+	<input class="form" type="text" id="optionHeight" value="240" />
 	<br><br>
-	<label class="form" for="option_framerate">Frame Rate:</label>
-	<input class="form" type="text" id="option_framerate" value="15" />
+	<label class="form" for="optionFramerate">Frame Rate:</label>
+	<input class="form" type="text" id="optionFramerate" value="15" />
 	<br><br>
-	<label class="form" for="option_framerate">Audio bitrate:</label>
-	<select class="form" id="option_bitrate">
+	<label class="form" for="optionFramerate">Audio bitrate:</label>
+	<select class="form" id="optionBitrate">
 		<option value="22050">22050</option>
 		<option value="44100">44100</option>
 		<option value="11025">11025</option>
 	</select>
-	<input class="form" type="checkbox" style="display:none" id="checkbox_Reconection" checked="true">
+	<input class="form" type="checkbox" style="display:none" id="checkboxReconnection" checked="true">
 	<label class="form" style="display:none">Reconnection </label>
 	<br>
 	<div class="form">
 		Connect the server, then start streaming.
 	</div><br />
-	<button class="form" id="button_server">Connect Server</button>
-	<button class="form" id="button_start">Start Streaming</button>
-	<button class="form" id="button_stop">Stop Streaming</button>
+	<button class="form" id="buttonServer">Connect Server</button>
+	<button class="form" id="buttonStart">Start Streaming</button>
+	<button class="form" id="buttonStop">Stop Streaming</button>
 
 	<br />
 	<hr />
@@ -39,104 +39,103 @@
 	</h2>
 
 	<div class="video">
-		<p id="output_message"></p>
+		<p id="outputMessage"></p>
 
-		<video id="output_video" playsinline muted autoplay></video>
+		<video id="outputVideo" playsinline muted autoplay></video>
 		<svg id="recording" height="50" width="50">
 			<circle id="recordingCircle" cx="25" cy="25" r="20" stroke="black" stroke-width="1" fill="gray" />
 		</svg>
 		<!-- <video id="videoElement" preload="none"></video> -->
 	</div>
 
-
-	<textarea readonly="true" id="output_console" rows=15>
+	<textarea readonly="true" id="outputConsole" rows=15>
 </textarea>
 	<script>
 		function fail(str) { alert(str + "\nUnable to access the camera Please ensure you are on HTTPS and using Firefox or Chrome."); location.replace('http://mozilla.org/firefox'); }
 
-		var output_console = document.getElementById('output_console'),
-			output_message = document.getElementById('output_message'),
-			output_video = document.getElementById('output_video'),
+		var outputConsole = document.getElementById('outputConsole'),
+			outputMessage = document.getElementById('outputMessage'),
+			outputVideo = document.getElementById('outputVideo'),
 			socketio_address = '/',
-			option_width = document.getElementById('option_width'),
-			option_height = document.getElementById('option_height'),
-			option_framerate = document.getElementById('option_framerate'),
-			option_bitrate = document.getElementById('option_bitrate'),
-			button_start = document.getElementById('button_start'),
-			height = parseInt(option_height.value),
-			width = parseInt(option_width.value),
-			framerate = parseInt(option_framerate.value),
-			audiobitrate = parseInt(option_bitrate.value),
+			optionWidth = document.getElementById('optionWidth'),
+			optionHeight = document.getElementById('optionHeight'),
+			optionFramerate = document.getElementById('optionFramerate'),
+			optionBitrate = document.getElementById('optionBitrate'),
+			buttonStart = document.getElementById('buttonStart'),
+			height = parseInt(optionHeight.value),
+			width = parseInt(optionWidth.value),
+			framerate = parseInt(optionFramerate.value),
+			audiobitrate = parseInt(optionBitrate.value),
 			url = 'rtmp://'+location.host.split(':')[0]+':1935/a';
 
 		console.log("framerate", framerate);
-		option_height.onchange = option_height.onkeyup = function () { height = 1 * this.value; }
-		option_width.onchange = option_width.onkeyup = function () { width = 1 * this.value; console.log("width" + width); }
-		option_framerate.onchange = option_framerate.onkeyup = function () { framerate = 1 * this.value; console.log("framerate" + framerate); }
-		option_bitrate.onchange = option_bitrate.onkeyup = function () { audiobitrate = 1 * this.value; console.log("bitrate" + audiobitrate); }
-		button_start.onclick = requestMedia;
-		button_stop.onclick = stopStream;
-		button_server.onclick = connect_server;
-		var oo = document.getElementById("checkbox_Reconection");
+		optionHeight.onchange = optionHeight.onkeyup = function () { height = 1 * this.value; }
+		optionWidth.onchange = optionWidth.onkeyup = function () { width = 1 * this.value; console.log("width" + width); }
+		optionFramerate.onchange = optionFramerate.onkeyup = function () { framerate = 1 * this.value; console.log("framerate" + framerate); }
+		optionBitrate.onchange = optionBitrate.onkeyup = function () { audiobitrate = 1 * this.value; console.log("bitrate" + audiobitrate); }
+		buttonStart.onclick = requestMedia;
+		buttonStop.onclick = stopStream;
+		buttonServer.onclick = connectServer;
+		var oo = document.getElementById("checkboxReconnection");
 		//just start the server
-		//connect_server;
+		//connectServer;
 		var mediaRecorder;
 		var socket;
 		var state = "stop";
 		console.log("state initiated = " + state);
 		var t;
-		button_start.disabled = true;
-		button_stop.disabled = true;
+		buttonStart.disabled = true;
+		buttonStop.disabled = true;
 
-		function video_show(stream) {
-			if ("srcObject" in output_video) {
-				output_video.muted = true;
-				output_video.srcObject = stream;
+		function videoShow(stream) {
+			if ("srcObject" in outputVideo) {
+				outputVideo.muted = true;
+				outputVideo.srcObject = stream;
 
 			} else {
-				output_video.src = window.URL.createObjectURL(stream);
+				outputVideo.src = window.URL.createObjectURL(stream);
 			}
-			output_video.addEventListener("loadedmetadata", function (e) {
-				//console.log(output_video);
-				output_message.innerHTML = "Local video source size:" + output_video.videoWidth + "x" + output_video.videoHeight;
+			outputVideo.addEventListener("loadedmetadata", function (e) {
+				//console.log(outputVideo);
+				outputMessage.innerHTML = "Local video source size:" + outputVideo.videoWidth + "x" + outputVideo.videoHeight;
 			}, false);
 		}
 
-		function show_output(str) {
-			output_console.value += "\n" + str;
-			output_console.scrollTop = output_console.scrollHeight;
+		function showOutput(str) {
+			outputConsole.value += "\n" + str;
+			outputConsole.scrollTop = outputConsole.scrollHeight;
 		};
 
 		function timedCount() {
-			var oo = document.getElementById("checkbox_Reconection");
+			var oo = document.getElementById("checkboxReconnection");
 			if (oo.checked) {
 				console.log("timed count state = " + state);
 				if (state == "ready") {
 					console.log("reconnecting and restarting the media stream");
 					//do I need to rerun the request media?
 
-					connect_server();
-					button_start.disabled = false;
-					button_server.disabled = true;
+					connectServer();
+					buttonStart.disabled = false;
+					buttonServer.disabled = true;
 				}
 				else {
 					console.log("not ready yet - wating 1000ms");
 					t = setTimeout("timedCount()", 1000);
-					connect_server();
-					output_message.innerHTML = "try connect server ...";
-					button_start.disabled = true;
-					button_server.disabled = false;
+					connectServer();
+					outputMessage.innerHTML = "try connect server ...";
+					buttonStart.disabled = true;
+					buttonServer.disabled = false;
 				}
 			}
 			else {
 				//reconnection is off
 				console.log("reconnection is off, buttons hcnage and we are done.");
-				button_start.disabled = true;
-				button_server.disabled = false;
+				buttonStart.disabled = true;
+				buttonServer.disabled = false;
 			}
 		}
 
-		function connect_server() {
+		function connectServer() {
 			navigator.getUserMedia = (navigator.mediaDevices.getUserMedia ||
 				navigator.mediaDevices.mozGetUserMedia ||
 				navigator.mediaDevices.msGetUserMedia ||
@@ -149,37 +148,37 @@
 			//start socket connection
 			socket = io.connect(socketio_address.value, socketOptions);
 			// console.log("ping interval =", socket.pingInterval, " ping TimeOut" = socket.pingTimeout);
-			//output_message.innerHTML=socket;
+			//outputMessage.innerHTML=socket;
 
 			socket.on('connect_timeout', (timeout) => {
 				console.log("state on connection timeout= " + timeout);
-				output_message.innerHTML = "Connection timed out";
+				outputMessage.innerHTML = "Connection timed out";
 				recordingCircle.style.fill = 'gray';
 
 			});
 
             socket.on('error', (error) => {
 				console.log("state on connection error= " + error);
-				output_message.innerHTML = "Connection error";
+				outputMessage.innerHTML = "Connection error";
 				recordingCircle.style.fill = 'gray';
 			});
 
 			socket.on('connect_error', function () {
 				console.log("state on connection error= " + state);
-				output_message.innerHTML = "Connection Failed";
+				outputMessage.innerHTML = "Connection Failed";
 				recordingCircle.style.fill = 'gray';
 			});
 
 			socket.on('message', function (m) {
 				console.log("state on message= " + state);
 				console.log('recv server message', m);
-				show_output('SERVER:' + m);
+				showOutput('SERVER:' + m);
 
 			});
 
 			socket.on('fatal', function (m) {
 
-				show_output('Fatal ERROR: unexpected:' + m);
+				showOutput('Fatal ERROR: unexpected:' + m);
 				//alert('Error:'+m);
 				console.log("fatal socket error!!", m);
 				console.log("state on fatal error= " + state);
@@ -189,14 +188,14 @@
 
 				// mediaRecorder.start();
 				// state="stop";
-				// button_start.disabled=true;
-				// button_server.disabled=false;
-				// document.getElementById('button_start').disabled=true;　
+				// buttonStart.disabled=true;
+				// buttonServer.disabled=false;
+				// document.getElementById('buttonStart').disabled=true;　
 				//restart the server
 
 				if (oo.checked) {
 					//timedCount();
-					output_message.innerHTML = "server is reload!";
+					outputMessage.innerHTML = "server is reload!";
 					console.log("server is reloading!");
 					recordingCircle.style.fill = 'gray';
 				}
@@ -205,37 +204,37 @@
 
 			socket.on('ffmpeg_stderr', function (m) {
 				//this is the ffmpeg output for each frame
-				show_output('FFMPEG:' + m);
+				showOutput('FFMPEG:' + m);
 			});
 
 			socket.on('disconnect', function (reason) {
 				console.log("state disconec= " + state);
-				show_output('ERROR: server disconnected!');
+				showOutput('ERROR: server disconnected!');
 				console.log('ERROR: server disconnected!' + reason);
 				recordingCircle.style.fill = 'gray';
 				//reconnect the server
-				connect_server();
+				connectServer();
 
 				//socket.open();
 				//mediaRecorder.stop();
 				//state="stop";
-				//button_start.disabled=true;
-				//button_server.disabled=false;
-				//	document.getElementById('button_start').disabled=true;　
-				//var oo=document.getElementById("checkbox_Reconection");
+				//buttonStart.disabled=true;
+				//buttonServer.disabled=false;
+				//	document.getElementById('buttonStart').disabled=true;　
+				//var oo=document.getElementById("checkboxReconnection");
 				if (oo.checked) {
 					//timedCount();
-					output_message.innerHTML = "server is reloading!";
+					outputMessage.innerHTML = "server is reloading!";
 					console.log("server is reloading!");
 				}
 			});
 
 			state = "ready";
 			console.log("state = " + state);
-			button_start.disabled = false;
-			button_stop.disabled = false;
-			button_server.disabled = true;
-			output_message.innerHTML = "connect server successful";
+			buttonStart.disabled = false;
+			buttonStop.disabled = false;
+			buttonServer.disabled = true;
+			outputMessage.innerHTML = "connect server successful";
 		}
 
 		function requestMedia() {
@@ -255,15 +254,15 @@
                 .then(function (stream) {
                     //let supported = navigator.mediaDevices.getSupportedConstraints();
                     //console.log(supported);
-                    video_show(stream);//only show locally, not remotely
+                    videoShow(stream); //only show locally, not remotely
                     recordingCircle.style.fill = 'red';
                     socket.emit('config_rtmpDestination', url);
                     socket.emit('start', 'start');
                     mediaRecorder = new MediaRecorder(stream);
                     mediaRecorder.start(250);
-                    button_stop.disabled = false;
-                    button_start.disabled = true;
-                    button_server.disabled = true;
+                    buttonStop.disabled = false;
+                    buttonStart.disabled = true;
+                    buttonServer.disabled = true;
 
                     //show remote stream
                     var livestream = document.getElementsByClassName("Livestream");
@@ -286,7 +285,7 @@
                         let error = event.error;
                         console.log("error", error.name);
                     };
-                    //document.getElementById('button_start').disabled=false;　
+                    //document.getElementById('buttonStart').disabled=false;　
 
                     mediaRecorder.ondataavailable = function (e) {
                         console.log(e.data);
@@ -297,11 +296,11 @@
                 })
                 .catch(function (err) {
                     console.log('The following error occured: ' + err);
-                    show_output('Local getUserMedia ERROR:' + err);
-                    output_message.innerHTML = "Local video source size is not support or No camera ?" + output_video.videoWidth + "x" + output_video.videoHeight;
+                    showOutput('Local getUserMedia ERROR:' + err);
+                    outputMessage.innerHTML = "Local video source size is not support or No camera?" + outputVideo.videoWidth + "x" + outputVideo.videoHeight;
                     state = "stop";
-                    button_start.disabled = true;
-                    button_server.disabled = false;
+                    buttonStart.disabled = true;
+                    buttonServer.disabled = false;
                 });
 		}
 
@@ -310,11 +309,10 @@
 			//stream.getTracks().forEach(track => track.stop())
 			mediaRecorder.stop();
 			recordingCircle.style.fill = 'gray';
-			button_stop.disabled = true;
-			button_start.disabled = true;
-			button_server.disabled = false;
+			buttonStop.disabled = true;
+			buttonStart.disabled = true;
+			buttonServer.disabled = false;
 		}
 	</script>
-
 </body>
 </html>
