@@ -9,7 +9,8 @@ const buttonStart = document.getElementById('buttonStart')
 const buttonStop = document.getElementById('buttonStop')
 const buttonServer = document.getElementById('buttonServer')
 const recordingCircle = document.getElementById('recordingCircle')
-const socketioAddress = '/'
+// const socketioAddress = '/' // For same server
+const socketioAddress = 'ws://localhost:3000/'
 const height = 240
 const width = 240
 const framerate = 15
@@ -92,7 +93,7 @@ function connectServer () {
     }
   }
 
-  socket = io.connect(socketioAddress.value, socketOptions)
+  socket = io.connect(socketioAddress, socketOptions)
 
   socket.on('connect_timeout', (timeout) => {
     console.log('state on connection timeout= ' + timeout)
